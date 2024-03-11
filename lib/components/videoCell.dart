@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hackdu/pages/videoPlayerPage.dart';
 
@@ -12,7 +13,8 @@ class VideoCell extends StatelessWidget {
       required this.channelThumbnail,
       required this.videoTitle,
       required this.channelName,
-      required this.viewCount, required this.serialNo});
+      required this.viewCount,
+      required this.serialNo});
 
   final String videoId;
   final String videoThumbnail;
@@ -25,23 +27,21 @@ class VideoCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: (){
+      onTap: () {
         dynamic videoData = api.fdata[serialNo];
         details.videoId = videoData['id']['videoId'];
-        details.videoThumbnail = videoData['snippet']
-        ['thumbnails']['high']['url'];
-        details.channelThumbnail = videoData
-        ["channel_thumbnail"];
+        details.videoThumbnail =
+            videoData['snippet']['thumbnails']['high']['url'];
+        details.channelThumbnail = videoData["channel_thumbnail"];
         details.videoTitle = videoData['snippet']['title'];
-        details.channelName = videoData['snippet']
-        ['channelTitle'];
+        details.channelName = videoData['snippet']['channelTitle'];
         details.viewCount = videoData['items'][0]['statistics']['viewCount'];
         details.likeCount = videoData['items'][0]['statistics']['likeCount'];
-        details.videoDescription = videoData['snippet']
-        ['description'];
-        details.uploadDate = videoData['snippet']
-        ['publishTime'].toString().substring(0,10);
-        Navigator.push(context, MaterialPageRoute(builder: (context) =>  const VideoPlayer()));
+        details.videoDescription = videoData['snippet']['description'];
+        details.uploadDate =
+            videoData['snippet']['publishTime'].toString().substring(0, 10);
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const VideoPlayer()));
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 30),
@@ -58,8 +58,8 @@ class VideoCell extends StatelessWidget {
                 fit: BoxFit.cover,
               ),
             ),
-            SizedBox(
-      
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 6.5),
               child: Row(
                 children: [
                   ClipRRect(
@@ -70,29 +70,31 @@ class VideoCell extends StatelessWidget {
                       alignment: Alignment.center,
                     ),
                   ),
-                  const SizedBox(width: 10,),
+                  const SizedBox(
+                    width: 10,
+                  ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(
-                        width: MediaQuery.sizeOf(context).width*0.85,
+                        width: MediaQuery.sizeOf(context).width * 0.85,
                         child: Text(
                           videoTitle,
                           overflow: TextOverflow.visible,
-                          style:
-                              const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w600),
                         ),
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-      
                           Text(
                             channelName,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
-                                fontSize: 14, ),
+                              fontSize: 14,
+                            ),
                           ),
                           const SizedBox(
                             width: 10,

@@ -1,7 +1,10 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:hackdu/videoDetails.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -31,26 +34,47 @@ class _NotesContainerState extends State<NotesContainer> {
           children: [
             TextButton(
                 onPressed: () async {
-                  showDialog(context: context, builder: (context){
-                    return Dialog(
-                      child: Container(
-                        height: 160,
-                        width: 300,
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text("Your notes are being generated", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 17),),
-                              SizedBox(height: 25,),
-                              CircularProgressIndicator(),
-                            ],
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return const Dialog(
+                          child: SizedBox(
+                            height: 160,
+                            width: 300,
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Your notes are being generated",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 17),
+                                  ),
+                                  SizedBox(
+                                    height: 25,
+                                  ),
+                                  CircularProgressIndicator(),
+                                ],
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    );
-                  });
+                        );
+                      });
+
+                  CollectionReference notesDB =
+                      FirebaseFirestore.instance.collection('notes');
                   TextEditingController controller = TextEditingController();
                   controller.text = await YoutubeAPI().getNotes(widget.videoId);
+                  notesDB.add({
+                    'uid': FirebaseAuth.instance.currentUser?.uid,
+                    'notes': controller.text,
+                    'videoTitle': details.videoTitle,
+                    'videoChannel': details.channelName,
+                    'timeStamp': Timestamp.now(),
+                    'thumbnail': details.channelThumbnail
+                  });
+
                   List<String> splitData = controller.text.split('\n');
                   notes = [];
                   for (int i = 0; i < splitData.length; i++) {
@@ -120,15 +144,13 @@ class _NotesContainerState extends State<NotesContainer> {
                         ));
                       }
                     }
-
-
                   }
                   pdfNotes.add(pw.SizedBox(height: 50));
-                  pdfNotes.add(pw.Align(alignment: pw.Alignment.bottomRight,
-                  child: pw.Text(
-                    'these notes are generated using ai',
-                    style:  pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold)
-                  )));
+                  pdfNotes.add(pw.Align(
+                      alignment: pw.Alignment.bottomRight,
+                      child: pw.Text('these notes are generated using ai',
+                          style: pw.TextStyle(
+                              fontSize: 12, fontWeight: pw.FontWeight.bold))));
                   noteStatus = true;
                   setState(() {});
                   Navigator.pop(context);
