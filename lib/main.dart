@@ -7,14 +7,7 @@ import 'package:hackdu/pages/signup.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Platform.isAndroid
-      ? await Firebase.initializeApp(
-          options: const FirebaseOptions(
-              apiKey: 'AIzaSyA_XRWQYl76-2PGE7JSuNkB8NvYmo1ENKk',
-              appId: '1:920170239614:android:ddb98556bb1f35ce706a2f',
-              messagingSenderId: '920170239614',
-              projectId: 'educational-1447e'))
-      : await Firebase.initializeApp();
+  Firebase.initializeApp();
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   // FirebaseAuth auth = FirebaseAuth.instance;
   // FirebaseAuth.instance.userChanges().listen((User? user) {
