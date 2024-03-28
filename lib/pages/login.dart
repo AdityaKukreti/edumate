@@ -4,13 +4,15 @@ import 'package:hackdu/pages/searchPage.dart';
 import 'package:hackdu/pages/signup.dart';
 
 class Login extends StatefulWidget {
-   Login({super.key});
+  Login({super.key});
   bool isPressed = false;
   @override
   State<Login> createState() => _LoginState();
 }
 
 class _LoginState extends State<Login> {
+  bool _isLoading = false; // Added a state variable to track loading state
+
   @override
   Widget build(BuildContext context) {
     TextEditingController email = TextEditingController();
@@ -87,41 +89,44 @@ class _LoginState extends State<Login> {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                         content: Text("One of the fields are empty")));
                   } else {
+                    setState(() {
+                      _isLoading = true; // Set loading state to true
+                    });
                     try {
-                      setState(() {
-                        widget.isPressed = true;
-                      });
                       UserCredential user = await FirebaseAuth.instance
                           .signInWithEmailAndPassword(
-                              email: email.text, password: password.text);
+                          email: email.text, password: password.text);
                       Navigator.pushReplacement(context,
                           MaterialPageRoute(builder: (context) {
-                        return SearchPage();
-                      }));
-                      // final googleSignIn = await FirebaseAuth.instance.signInWithProvider(GoogleAuthProvider());
+                            return SearchPage();
+                          }));
                     } on FirebaseAuthException catch (e) {
-
-                      if (e.code == "user-not-found") {
+                      setState(() {
+                        _isLoading = false; // Set loading state to false
+                      });
+                       if (e.code == "invalid-credential") {
                         ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Account doesn't exist")));
-                      } else if (e.code == "wrong-password") {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Account doesn't exist")));
-                      }
-                      // setState(() {
-                      //   widget.isPressed = false;
-                      // });
+                            const SnackBar(content: Text("Invalid email or password")));
+                      }else if (e.code == "invalid-email") {
+                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                             content: Text("Email format is invalid")));
+                       }
                     } catch (e) {
+                      setState(() {
+                        _isLoading = false; // Set loading state to false
+                      });
                       print(e);
                     }
                   }
                 },
                 padding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+                const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
                 color: Colors.black12,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
-                child: widget.isPressed?const CircularProgressIndicator(): const Text(
+                child: _isLoading
+                    ? const CircularProgressIndicator()
+                    : const Text(
                   "Login",
                   style: TextStyle(fontSize: 20),
                 ),
@@ -143,13 +148,13 @@ class _LoginState extends State<Login> {
                     child: const Text(
                       "Register",
                       style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                      TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
                     ),
                     onTap: () {
                       Navigator.pushReplacement(context,
                           MaterialPageRoute(builder: (context) {
-                        return const Register();
-                      }));
+                            return const Register();
+                          }));
                     },
                   )
                 ],

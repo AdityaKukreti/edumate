@@ -16,6 +16,9 @@ class YoutubeAPI
   
   Future<String> getNotes(String videoId) async {
     final response = await dio.post("https://youtube-data-api-c562.onrender.com/notes", data: {'videoId':videoId});
+    if (response.data['status'] == 'false') {
+      return 'no notes';
+    }
     return response.data['notes'];
   }
 }

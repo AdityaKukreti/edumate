@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hackdu/pages/videoPlayerPage.dart';
 
@@ -26,6 +27,8 @@ class VideoCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    CollectionReference historyDB =
+        FirebaseFirestore.instance.collection('userHistory');
     return InkWell(
       onTap: () {
         dynamic videoData = api.fdata[serialNo];
@@ -40,6 +43,15 @@ class VideoCell extends StatelessWidget {
         details.videoDescription = videoData['snippet']['description'];
         details.uploadDate =
             videoData['snippet']['publishTime'].toString().substring(0, 10);
+        historyDB.add({
+          'videoId': details.videoId,
+          'videoTitle': details.videoTitle,
+          'videoThumbnail': details.videoThumbnail,
+          'channelName': details.channelName,
+          'uid': FirebaseAuth.instance.currentUser?.uid,
+          'timeStamp': Timestamp.now(),
+          'channelThumbnail': details.channelThumbnail
+        });
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => const VideoPlayer()));
       },

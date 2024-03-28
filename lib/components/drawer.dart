@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hackdu/pages/account.dart';
+import 'package:hackdu/pages/history.dart';
 import '../pages/login.dart';
 import '../pages/notesPage.dart';
 
@@ -24,7 +25,7 @@ class MyDrawer extends StatelessWidget {
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 25,letterSpacing: 2),
                 )),
              ListTile(
-              title: Row(
+              title: const Row(
                 children: [
                   Icon(Icons.person),
                   SizedBox(
@@ -69,6 +70,31 @@ class MyDrawer extends StatelessWidget {
                     uid: FirebaseAuth.instance.currentUser!.uid,
                   );
                 }));
+              },
+            ),
+            ListTile(
+              title: const Row(
+                children: [
+                  Icon(Icons.history),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    "History",
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 3),
+                  ),
+                ],
+              ),
+              onTap: (){
+                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (context){
+                  return HistoryPage(uid: FirebaseAuth.instance.currentUser!.uid,);
+                }
+                )
+    );
               },
             ),
             const Expanded(

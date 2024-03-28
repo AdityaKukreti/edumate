@@ -16,7 +16,7 @@ class NotesPage extends StatefulWidget {
 class _NotesPageState extends State<NotesPage> {
   @override
   Widget build(BuildContext context) {
-    FirestoreDatabase database = FirestoreDatabase();
+    NotesDatabase database = NotesDatabase();
     return Scaffold(
       appBar: AppBar(
         title: const Text(

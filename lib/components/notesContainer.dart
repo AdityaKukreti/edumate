@@ -93,6 +93,7 @@ class _OldNotesContainerState extends State<OldNotesContainer> {
                 fontWeight: FontWeight.w600,
                 fontSize: 16),
           ),
+          SizedBox(height: 5,),
           Row(
             children: [
               ClipRRect(

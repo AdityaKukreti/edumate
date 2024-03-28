@@ -6,8 +6,15 @@ import 'package:hackdu/pages/searchPage.dart';
 
 import 'login.dart';
 
-class Register extends StatelessWidget {
+class Register extends StatefulWidget {
   const Register({super.key});
+
+  @override
+  State<Register> createState() => _RegisterState();
+}
+
+class _RegisterState extends State<Register> {
+  bool _isLoading = false; // Added a state variable to track loading state
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +38,8 @@ class Register extends StatelessWidget {
               ),
               const SizedBox(
                 height: 20,
-              ),TextField(
+              ),
+              TextField(
                 controller: name,
                 decoration: InputDecoration(
                     border: OutlineInputBorder(
@@ -81,48 +89,65 @@ class Register extends StatelessWidget {
               ),
               MaterialButton(
                 onPressed: () async {
-                  if (name.text.isEmpty || email.text.isEmpty || password.text.isEmpty || rePassword.text.isEmpty)
-                    {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("One of the fields is empty")));
-                    }
-                  else if (password.text != rePassword.text)
-                    {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Passwords do not match")));
-                    }
-                  else{
-                  try {
-                    await FirebaseAuth.instance
-                        .createUserWithEmailAndPassword(
-                            email: email.text, password: password.text);
-                    CollectionReference userDB =
-                    FirebaseFirestore.instance.collection('users');
-                    userDB.add({
-                      'name':name.text,
-                      'email':email.text
+                  if (name.text.isEmpty ||
+                      email.text.isEmpty ||
+                      password.text.isEmpty ||
+                      rePassword.text.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text("One of the fields is empty")));
+                  } else if (password.text != rePassword.text) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text("Passwords do not match")));
+                  } else {
+                    setState(() {
+                      _isLoading = true; // Set loading state to true
                     });
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) {
-                      return SearchPage();
-                    }));
-                    // final googleSignIn = await FirebaseAuth.instance.signInWithProvider(GoogleAuthProvider());
-                  } on FirebaseAuthException catch (e) {
-                    if (e.code == "weak-password") {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Use a stronger password")));
-                    } else if (e.code == "email-already-in-use") {
+                    try {
+                      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                          email: email.text, password: password.text);
+                      CollectionReference userDB =
+                      FirebaseFirestore.instance.collection('users');
+                      userDB.add({
+                        'name': name.text,
+                        'email': email.text
+                      });
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (context) {
+                            return SearchPage();
+                          }));
+                    } on FirebaseAuthException catch (e) {
+                      print(e.code);
+                      setState(() {
+                        _isLoading = false; // Set loading state to false
+                      });
+                      if (e.code == "weak-password") {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("Use a stronger password")));
+                      } else if (e.code == "email-already-in-use") {
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                            content: Text("Email is already in use")));
+                      }
+                      else if (e.code == "invalid-email") {
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                            content: Text("Email format is invalid")));
+                      }
+                    } catch (e) {
+                      setState(() {
+                        _isLoading = false; // Set loading state to false
+                      });
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text("Email is already in use")));
+                          content: Text("Some error occurred. Please try again later")));
                     }
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Some error occurred. Please try again later")));
-                  }
                   }
                 },
                 padding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+                const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
                 color: Colors.black12,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
-                child: const Text(
+                child: _isLoading
+                    ? const CircularProgressIndicator()
+                    : const Text(
                   "Sign Up",
                   style: TextStyle(fontSize: 20),
                 ),
@@ -144,13 +169,13 @@ class Register extends StatelessWidget {
                     child: const Text(
                       "Login",
                       style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                      TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
                     ),
                     onTap: () {
                       Navigator.pushReplacement(context,
                           MaterialPageRoute(builder: (context) {
-                        return  Login();
-                      }));
+                            return Login();
+                          }));
                     },
                   )
                 ],
