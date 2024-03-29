@@ -79,7 +79,9 @@ class _NotesContainerState extends State<NotesContainer> {
                       'videoTitle': details.videoTitle,
                       'videoChannel': details.channelName,
                       'timeStamp': Timestamp.now(),
-                      'thumbnail': details.channelThumbnail
+                      'thumbnail': details.channelThumbnail,
+                      'videoThumbnail': details.videoThumbnail,
+                      'videoId':details.videoId
                     });
 
                     List<String> splitData = controller.text.split('\n');

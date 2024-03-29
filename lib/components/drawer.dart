@@ -4,6 +4,7 @@ import 'package:hackdu/pages/account.dart';
 import 'package:hackdu/pages/history.dart';
 import '../pages/login.dart';
 import '../pages/notesPage.dart';
+import '../pages/quiz.dart';
 
 class MyDrawer extends StatelessWidget {
   const MyDrawer({super.key});
@@ -11,7 +12,6 @@ class MyDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-
       child: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Column(
@@ -22,9 +22,12 @@ class MyDrawer extends StatelessWidget {
                 margin: EdgeInsets.zero,
                 child: Text(
                   "EduMate",
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 25,letterSpacing: 2),
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 25,
+                      letterSpacing: 2),
                 )),
-             ListTile(
+            ListTile(
               title: const Row(
                 children: [
                   Icon(Icons.person),
@@ -40,9 +43,9 @@ class MyDrawer extends StatelessWidget {
                   ),
                 ],
               ),
-              onTap: (){
+              onTap: () {
                 Navigator.pop(context);
-                Navigator.push(context, MaterialPageRoute(builder: (context){
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
                   return Account();
                 }));
               },
@@ -80,7 +83,7 @@ class MyDrawer extends StatelessWidget {
                     width: 10,
                   ),
                   Text(
-                    "History",
+                    "Watch History",
                     style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
@@ -88,13 +91,38 @@ class MyDrawer extends StatelessWidget {
                   ),
                 ],
               ),
-              onTap: (){
+              onTap: () {
                 Navigator.pop(context);
-                Navigator.push(context, MaterialPageRoute(builder: (context){
-                  return HistoryPage(uid: FirebaseAuth.instance.currentUser!.uid,);
-                }
-                )
-    );
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return HistoryPage(
+                    uid: FirebaseAuth.instance.currentUser!.uid,
+                  );
+                }));
+              },
+            ),
+            ListTile(
+              title: const Row(
+                children: [
+                  Icon(Icons.quiz),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    "Quiz",
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 3),
+                  ),
+                ],
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return QuizPage(
+                    uid: FirebaseAuth.instance.currentUser!.uid,
+                  );
+                }));
               },
             ),
             const Expanded(
@@ -121,8 +149,8 @@ class MyDrawer extends StatelessWidget {
                 await FirebaseAuth.instance.signOut();
                 Navigator.pushReplacement(context,
                     MaterialPageRoute(builder: (context) {
-                      return Login();
-                    }));
+                  return Login();
+                }));
               },
             )
           ],

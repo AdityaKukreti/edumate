@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hackdu/components/notesContainer.dart';
 import 'package:hackdu/database/database.dart';
+import 'package:hackdu/pages/videoPlayerPage.dart';
+
+import '../api.dart';
+import '../videoDetails.dart';
 
 class NotesPage extends StatefulWidget {
   const NotesPage({super.key, required this.uid});
@@ -25,7 +29,7 @@ class _NotesPageState extends State<NotesPage> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -43,7 +47,13 @@ class _NotesPageState extends State<NotesPage> {
                     return const Center(
                       child: Padding(
                         padding: EdgeInsets.all(25),
-                        child: Text("No notes to show here.",style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, letterSpacing: 1.5),),
+                        child: Text(
+                          "No notes to show here.",
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: 1.5),
+                        ),
                       ),
                     );
                   }
@@ -59,6 +69,33 @@ class _NotesPageState extends State<NotesPage> {
                               channelName: post['videoChannel'],
                               channelThumbnail: post['thumbnail'],
                               notes: post['notes'],
+                              videoThumbnail: post['videoThumbnail'],
+                              videoId: post['videoId'],
+                        onTap: () async {
+
+                            Map<String, dynamic> data =
+                                await api.getVideoDetails(post['videoId']);
+                            details.videoId = post['videoId'];
+                            details.videoThumbnail = data['thumbnail_url'];
+                            details.channelThumbnail =
+                            data["channel_thumbnail_url"];
+                            details.videoTitle = data['title'];
+                            details.channelName = data['channel_title'];
+                            details.viewCount = data['view_count'];
+                            details.likeCount = data['like_count'];
+                            details.videoDescription = data['description'];
+                            details.uploadDate = data['published_at']
+                                .toString()
+                                .substring(0, 10);
+
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => VideoPlayer(
+                                      videoId: details.videoId,
+                                    )));
+
+                        }
                             )
                           : const Text("");
                       // }

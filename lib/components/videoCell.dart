@@ -52,8 +52,12 @@ class VideoCell extends StatelessWidget {
           'timeStamp': Timestamp.now(),
           'channelThumbnail': details.channelThumbnail
         });
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const VideoPlayer()));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => VideoPlayer(
+                      videoId: details.videoId,
+                    )));
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 30),
@@ -94,7 +98,7 @@ class VideoCell extends StatelessWidget {
                           videoTitle,
                           overflow: TextOverflow.visible,
                           style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w600),
+                              fontSize: 16, fontWeight: FontWeight.w700),
                         ),
                       ),
                       Row(
@@ -106,6 +110,7 @@ class VideoCell extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                               fontSize: 14,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                           const SizedBox(

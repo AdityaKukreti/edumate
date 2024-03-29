@@ -5,16 +5,16 @@ import 'package:hackdu/pages/videoPlayerPage.dart';
 import '../database/database.dart';
 import '../videoDetails.dart';
 
-class HistoryPage extends StatefulWidget {
-  const HistoryPage({super.key, required this.uid});
+class QuizPage extends StatefulWidget {
+  const QuizPage({super.key, required this.uid});
 
   final String uid;
 
   @override
-  State<HistoryPage> createState() => _HistoryPageState();
+  State<QuizPage> createState() => _QuizPageState();
 }
 
-class _HistoryPageState extends State<HistoryPage> {
+class _QuizPageState extends State<QuizPage> {
   @override
   Widget build(BuildContext context) {
     HistoryDatabase database = HistoryDatabase();
@@ -48,7 +48,7 @@ class _HistoryPageState extends State<HistoryPage> {
                       child: Padding(
                         padding: EdgeInsets.all(25),
                         child: Text(
-                          "No user history to show here",
+                          "No videos here to select from",
                           style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
@@ -100,11 +100,15 @@ class _HistoryPageState extends State<HistoryPage> {
                                     vertical: 15, horizontal: 10),
                                 child: Row(
                                   children: [
+                                    Checkbox(
+                                      value: false,
+                                      onChanged: (value) {},
+                                    ),
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(20),
                                       child: Image.network(
                                         post['videoThumbnail'],
-                                        width: 135,
+                                        width: 120,
                                       ),
                                     ),
                                     const SizedBox(
@@ -120,14 +124,14 @@ class _HistoryPageState extends State<HistoryPage> {
                                             width: MediaQuery.of(context)
                                                     .size
                                                     .width *
-                                                0.525,
+                                                0.4,
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 5),
                                             child: Text(
                                               post['videoTitle'],
                                               style: const TextStyle(
                                                   fontWeight: FontWeight.w600,
-                                                  fontSize: 16),
+                                                  fontSize: 15),
                                               maxLines: 2,
                                               overflow: TextOverflow.ellipsis,
                                             )),
@@ -141,7 +145,7 @@ class _HistoryPageState extends State<HistoryPage> {
                                                   BorderRadius.circular(30),
                                               child: Image.network(
                                                 post['channelThumbnail'],
-                                                width: 30,
+                                                width: 25,
                                               ),
                                             ),
                                             const SizedBox(
@@ -153,12 +157,12 @@ class _HistoryPageState extends State<HistoryPage> {
                                                 width: MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                    0.45,
+                                                    0.3,
                                                 child: Text(post['channelName'],
                                                     style: const TextStyle(
                                                         fontWeight:
                                                             FontWeight.w500,
-                                                        fontSize: 14,
+                                                        fontSize: 13,
                                                         overflow: TextOverflow
                                                             .ellipsis))),
                                           ],
