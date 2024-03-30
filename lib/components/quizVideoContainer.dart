@@ -1,34 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:hackdu/pages/quizGeneration.dart';
 
 class QuizVideo extends StatefulWidget {
-  const QuizVideo({super.key});
+  const QuizVideo(
+      {super.key,
+      required this.videoTitle,
+      required this.videoThumbnail,
+      required this.channelThumbnail,
+      required this.channedTitle,
+      required this.videoId});
+
+  final String videoTitle;
+  final String videoThumbnail;
+  final String channelThumbnail;
+  final String channedTitle;
+  final String videoId;
 
   @override
   State<QuizVideo> createState() => _QuizVideoState();
 }
 
 class _QuizVideoState extends State<QuizVideo> {
+  bool isPressed = false;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () async {
-        Map<String, dynamic> data = await api.getVideoDetails(post['videoId']);
-        details.videoId = post['videoId'];
-        details.videoThumbnail = data['thumbnail_url'];
-        details.channelThumbnail = data["channel_thumbnail_url"];
-        details.videoTitle = data['title'];
-        details.channelName = data['channel_title'];
-        details.viewCount = data['view_count'];
-        details.likeCount = data['like_count'];
-        details.videoDescription = data['description'];
-        details.uploadDate = data['published_at'].toString().substring(0, 10);
-
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => VideoPlayer(
-                      videoId: details.videoId,
-                    )));
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return QuizGenerationPage(videoId: widget.videoId);
+        }));
       },
       child: Container(
         width: double.maxFinite,
@@ -40,15 +41,11 @@ class _QuizVideoState extends State<QuizVideo> {
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
         child: Row(
           children: [
-            Checkbox(
-              value: false,
-              onChanged: (value) {},
-            ),
             ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: Image.network(
-                post['videoThumbnail'],
-                width: 120,
+                widget.videoThumbnail,
+                width: 135,
               ),
             ),
             const SizedBox(
@@ -59,10 +56,10 @@ class _QuizVideoState extends State<QuizVideo> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Container(
-                    width: MediaQuery.of(context).size.width * 0.4,
+                    width: MediaQuery.of(context).size.width * 0.5,
                     padding: const EdgeInsets.symmetric(horizontal: 5),
                     child: Text(
-                      post['videoTitle'],
+                      widget.videoTitle,
                       style: const TextStyle(
                           fontWeight: FontWeight.w600, fontSize: 15),
                       maxLines: 2,
@@ -76,7 +73,7 @@ class _QuizVideoState extends State<QuizVideo> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(30),
                       child: Image.network(
-                        post['channelThumbnail'],
+                        widget.channelThumbnail,
                         width: 25,
                       ),
                     ),
@@ -85,8 +82,8 @@ class _QuizVideoState extends State<QuizVideo> {
                     ),
                     Container(
                         padding: const EdgeInsets.only(right: 5),
-                        width: MediaQuery.of(context).size.width * 0.3,
-                        child: Text(post['channelName'],
+                        width: MediaQuery.of(context).size.width * 0.4,
+                        child: Text(widget.channedTitle,
                             style: const TextStyle(
                                 fontWeight: FontWeight.w500,
                                 fontSize: 13,

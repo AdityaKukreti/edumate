@@ -27,6 +27,13 @@ class YoutubeAPI {
         data: {'videoId': videoId});
     return response.data['data'];
   }
+
+  Future<Map<String, dynamic>> getQuiz(String videoId) async {
+    final response = await dio.post(
+        "https://youtube-data-api-c562.onrender.com/generateQuiz",
+        data: {'videoId': videoId});
+    return response.data['data'];
+  }
 }
 
 YoutubeAPI api = YoutubeAPI();
