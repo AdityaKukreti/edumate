@@ -32,7 +32,7 @@ class YoutubeAPI {
     final response = await dio.post(
         "https://youtube-data-api-c562.onrender.com/generateQuiz",
         data: {'videoId': videoId});
-    return response.data['data'];
+    return response.data;
   }
 }
 

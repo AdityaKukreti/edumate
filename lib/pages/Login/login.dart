@@ -1,11 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hackdu/pages/searchPage.dart';
-import 'package:hackdu/pages/signup.dart';
+import 'package:hackdu/pages/SearchPage/searchPage.dart';
+import 'package:hackdu/pages/SignUp/signup.dart';
 
 class Login extends StatefulWidget {
   Login({super.key});
+
   bool isPressed = false;
+
   @override
   State<Login> createState() => _LoginState();
 }
@@ -95,22 +97,24 @@ class _LoginState extends State<Login> {
                     try {
                       UserCredential user = await FirebaseAuth.instance
                           .signInWithEmailAndPassword(
-                          email: email.text, password: password.text);
+                              email: email.text, password: password.text);
                       Navigator.pushReplacement(context,
                           MaterialPageRoute(builder: (context) {
-                            return SearchPage();
-                          }));
+                        return SearchPage();
+                      }));
                     } on FirebaseAuthException catch (e) {
                       setState(() {
                         _isLoading = false; // Set loading state to false
                       });
-                       if (e.code == "invalid-credential") {
+                      if (e.code == "invalid-credential") {
                         ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Invalid email or password")));
-                      }else if (e.code == "invalid-email") {
-                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                             content: Text("Email format is invalid")));
-                       }
+                            const SnackBar(
+                                content: Text("Invalid email or password")));
+                      } else if (e.code == "invalid-email") {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text("Email format is invalid")));
+                      }
                     } catch (e) {
                       setState(() {
                         _isLoading = false; // Set loading state to false
@@ -120,16 +124,18 @@ class _LoginState extends State<Login> {
                   }
                 },
                 padding:
-                const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
-                color: Colors.black12,
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+                color: Colors.black,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
                 child: _isLoading
-                    ? const CircularProgressIndicator()
+                    ? const CircularProgressIndicator(
+                        color: Colors.white,
+                      )
                     : const Text(
-                  "Login",
-                  style: TextStyle(fontSize: 20),
-                ),
+                        "Login",
+                        style: TextStyle(fontSize: 20, color: Colors.white),
+                      ),
               ),
               const SizedBox(
                 height: 15,
@@ -148,13 +154,13 @@ class _LoginState extends State<Login> {
                     child: const Text(
                       "Register",
                       style:
-                      TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                          TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
                     ),
                     onTap: () {
                       Navigator.pushReplacement(context,
                           MaterialPageRoute(builder: (context) {
-                            return const Register();
-                          }));
+                        return const Register();
+                      }));
                     },
                   )
                 ],

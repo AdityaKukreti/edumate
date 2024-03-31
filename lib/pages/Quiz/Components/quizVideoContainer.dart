@@ -1,5 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hackdu/pages/quizGeneration.dart';
+import 'package:hackdu/pages/Quiz/quizGeneration.dart';
 
 class QuizVideo extends StatefulWidget {
   const QuizVideo(
@@ -7,13 +8,13 @@ class QuizVideo extends StatefulWidget {
       required this.videoTitle,
       required this.videoThumbnail,
       required this.channelThumbnail,
-      required this.channedTitle,
+      required this.channelTitle,
       required this.videoId});
 
   final String videoTitle;
   final String videoThumbnail;
   final String channelThumbnail;
-  final String channedTitle;
+  final String channelTitle;
   final String videoId;
 
   @override
@@ -28,7 +29,13 @@ class _QuizVideoState extends State<QuizVideo> {
     return GestureDetector(
       onTap: () {
         Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return QuizGenerationPage(videoId: widget.videoId);
+          return QuizGenerationPage(
+            videoId: widget.videoId,
+            videoTitle: widget.videoTitle,
+            videoThumbnail: widget.videoThumbnail,
+            channelTitle: widget.channelTitle,
+            channelThumbnail: widget.channelThumbnail,
+          );
         }));
       },
       child: Container(
@@ -83,7 +90,7 @@ class _QuizVideoState extends State<QuizVideo> {
                     Container(
                         padding: const EdgeInsets.only(right: 5),
                         width: MediaQuery.of(context).size.width * 0.4,
-                        child: Text(widget.channedTitle,
+                        child: Text(widget.channelTitle,
                             style: const TextStyle(
                                 fontWeight: FontWeight.w500,
                                 fontSize: 13,

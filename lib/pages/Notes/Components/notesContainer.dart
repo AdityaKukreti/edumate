@@ -81,7 +81,7 @@ class _OldNotesContainerState extends State<OldNotesContainer> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(top: 20, left: 10, right: 10),
-      margin: const EdgeInsets.symmetric(vertical: 15),
+      margin: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
         border: Border.all(
           width: 0.5,

@@ -1,10 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hackdu/pages/videoPlayerPage.dart';
-
-import '../api.dart';
-import '../videoDetails.dart';
+import 'package:hackdu/pages/VideoPlayer/videoPlayerPage.dart';
+import '../../../components/api.dart';
+import '../../../components/videoDetails.dart';
 
 class VideoCell extends StatelessWidget {
   const VideoCell(
@@ -60,40 +59,34 @@ class VideoCell extends StatelessWidget {
                     )));
       },
       child: Container(
-        margin: const EdgeInsets.only(bottom: 30),
+        margin: const EdgeInsets.only(bottom: 20),
         // width: double.maxFinite,
         child: Column(
           // mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              height: 220,
+              height: 200,
               width: double.maxFinite,
-              child: Image.network(
-                videoThumbnail,
-                // height: 200,
-                fit: BoxFit.cover,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.network(
+                  videoThumbnail,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
+            const SizedBox(
+              height: 5,
+            ),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 6.5),
+              padding: const EdgeInsets.symmetric(horizontal: 6.5),
               child: Row(
                 children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(30),
-                    child: Image.network(
-                      channelThumbnail,
-                      width: 35,
-                      alignment: Alignment.center,
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(
-                        width: MediaQuery.sizeOf(context).width * 0.85,
+                        width: MediaQuery.sizeOf(context).width * 0.925,
                         child: Text(
                           videoTitle,
                           overflow: TextOverflow.visible,
@@ -101,12 +94,31 @@ class VideoCell extends StatelessWidget {
                               fontSize: 16, fontWeight: FontWeight.w700),
                         ),
                       ),
+                      const SizedBox(
+                        height: 5,
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(30),
+                            child: Image.network(
+                              channelThumbnail,
+                              width: 30,
+                              alignment: Alignment.center,
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
                           Text(
-                            channelName,
+                            channelName.substring(
+                                    0,
+                                    channelName.length < 20
+                                        ? channelName.length
+                                        : 20) +
+                                (channelName.length > 20 ? '...' : ''),
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                               fontSize: 14,

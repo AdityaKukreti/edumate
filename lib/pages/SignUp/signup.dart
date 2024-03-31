@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hackdu/database/database.dart';
-import 'package:hackdu/pages/searchPage.dart';
+import 'package:hackdu/pages/SearchPage/searchPage.dart';
 
-import 'login.dart';
+import '../Login/login.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -103,18 +103,16 @@ class _RegisterState extends State<Register> {
                       _isLoading = true; // Set loading state to true
                     });
                     try {
-                      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                          email: email.text, password: password.text);
+                      await FirebaseAuth.instance
+                          .createUserWithEmailAndPassword(
+                              email: email.text, password: password.text);
                       CollectionReference userDB =
-                      FirebaseFirestore.instance.collection('users');
-                      userDB.add({
-                        'name': name.text,
-                        'email': email.text
-                      });
+                          FirebaseFirestore.instance.collection('users');
+                      userDB.add({'name': name.text, 'email': email.text});
                       Navigator.pushReplacement(context,
                           MaterialPageRoute(builder: (context) {
-                            return SearchPage();
-                          }));
+                        return SearchPage();
+                      }));
                     } on FirebaseAuthException catch (e) {
                       print(e.code);
                       setState(() {
@@ -122,35 +120,41 @@ class _RegisterState extends State<Register> {
                       });
                       if (e.code == "weak-password") {
                         ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Use a stronger password")));
+                            const SnackBar(
+                                content: Text("Use a stronger password")));
                       } else if (e.code == "email-already-in-use") {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                            content: Text("Email is already in use")));
-                      }
-                      else if (e.code == "invalid-email") {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                            content: Text("Email format is invalid")));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text("Email is already in use")));
+                      } else if (e.code == "invalid-email") {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text("Email format is invalid")));
                       }
                     } catch (e) {
                       setState(() {
                         _isLoading = false; // Set loading state to false
                       });
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text("Some error occurred. Please try again later")));
+                          content: Text(
+                              "Some error occurred. Please try again later")));
                     }
                   }
                 },
                 padding:
-                const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
-                color: Colors.black12,
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+                color: Colors.black,
+                minWidth: 150,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
                 child: _isLoading
-                    ? const CircularProgressIndicator()
+                    ? const CircularProgressIndicator(
+                        color: Colors.white,
+                      )
                     : const Text(
-                  "Sign Up",
-                  style: TextStyle(fontSize: 20),
-                ),
+                        "Sign Up",
+                        style: TextStyle(fontSize: 20, color: Colors.white),
+                      ),
               ),
               const SizedBox(
                 height: 20,
@@ -169,13 +173,13 @@ class _RegisterState extends State<Register> {
                     child: const Text(
                       "Login",
                       style:
-                      TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                          TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
                     ),
                     onTap: () {
                       Navigator.pushReplacement(context,
                           MaterialPageRoute(builder: (context) {
-                            return Login();
-                          }));
+                        return Login();
+                      }));
                     },
                   )
                 ],

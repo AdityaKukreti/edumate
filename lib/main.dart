@@ -2,8 +2,9 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:hackdu/pages/auth.dart';
-import 'package:hackdu/pages/signup.dart';
+import 'package:flutter/services.dart';
+
+import 'components/auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,15 +17,10 @@ void main() async {
               projectId: 'educational-1447e'))
       : await Firebase.initializeApp();
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-  // FirebaseAuth auth = FirebaseAuth.instance;
-  // FirebaseAuth.instance.userChanges().listen((User? user) {
-  //   if (user == null) {
-  //     print("Signed out");
-  //   }else
-  //     {
-  //       print("Signed in");
-  //     }
-  // });
+
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
   runApp(const MyApp());
 }
 

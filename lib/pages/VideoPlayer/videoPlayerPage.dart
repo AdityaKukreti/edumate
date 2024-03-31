@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hackdu/components/notesComponent.dart';
-import 'package:hackdu/videoDetails.dart';
+import 'package:hackdu/pages/VideoPlayer/Components/notesComponent.dart';
+import 'package:hackdu/pages/Quiz/quizGeneration.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
+import '../../components/videoDetails.dart';
 
 class VideoPlayer extends StatelessWidget {
   const VideoPlayer({super.key, required this.videoId});
@@ -68,6 +69,7 @@ class VideoPlayer extends StatelessWidget {
                               Scaffold.of(context).showBottomSheet(
                                 (context) {
                                   return Container(
+                                    color: Colors.grey[100],
                                     padding: const EdgeInsets.all(10),
                                     width: double.maxFinite,
                                     height:
@@ -205,18 +207,25 @@ class VideoPlayer extends StatelessWidget {
                             ),
                           ],
                         ),
-                        Row(
-                          children: [
-                            IconButton(
-                                onPressed: () {},
-                                icon: const Icon(Icons.thumb_up_alt_rounded)),
-                            IconButton(
-                                onPressed: () {},
-                                icon: const Icon(Icons.thumb_down_alt_rounded)),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                          ],
+                        MaterialButton(
+                          color: Colors.black,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          onPressed: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return QuizGenerationPage(
+                                  videoId: details.videoId,
+                                  videoTitle: details.videoTitle,
+                                  videoThumbnail: details.videoThumbnail,
+                                  channelTitle: details.channelName,
+                                  channelThumbnail: details.channelThumbnail);
+                            }));
+                          },
+                          child: const Text(
+                            "Take a quiz",
+                            style: TextStyle(color: Colors.white),
+                          ),
                         )
                       ],
                     ),

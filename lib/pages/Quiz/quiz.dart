@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hackdu/api.dart';
-import 'package:hackdu/components/quizVideoContainer.dart';
-import 'package:hackdu/pages/videoPlayerPage.dart';
-
-import '../database/database.dart';
-import '../videoDetails.dart';
+import 'package:hackdu/pages/Quiz/Components/quizVideoContainer.dart';
+import '../../database/database.dart';
 
 class QuizPage extends StatefulWidget {
   const QuizPage({super.key, required this.uid});
@@ -16,6 +12,8 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
+  int count = 0;
+
   @override
   Widget build(BuildContext context) {
     HistoryDatabase database = HistoryDatabase();
@@ -69,12 +67,12 @@ class _QuizPageState extends State<QuizPage> {
                               videoTitle: post['videoTitle'],
                               videoThumbnail: post['videoThumbnail'],
                               channelThumbnail: post['channelThumbnail'],
-                              channedTitle: post['channelName'],
+                              channelTitle: post['channelName'],
                               videoId: post['videoId'])
-                          : const Text("");
+                          : const SizedBox();
                     },
                   ));
-                })
+                }),
           ],
         ),
       ),
