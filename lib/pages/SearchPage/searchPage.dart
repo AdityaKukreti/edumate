@@ -1,5 +1,11 @@
+import 'dart:typed_data';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:hackdu/pages/OCR/ocr.dart';
 import 'package:hackdu/pages/SearchPage/Components/drawer.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../components/api.dart';
 import 'Components/videoCell.dart';
 
@@ -18,6 +24,17 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          // _pickImageAndUpload();
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return OCRScreen();
+          }));
+        },
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+        backgroundColor: Colors.grey[300],
+        child: Icon(CupertinoIcons.camera_fill),
+      ),
       appBar: AppBar(
         title: TextField(
           controller: widget.controller,

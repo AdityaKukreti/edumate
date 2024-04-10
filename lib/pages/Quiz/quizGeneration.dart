@@ -159,7 +159,7 @@ class _QuizGenerationPageState extends State<QuizGenerationPage>
                                 height: 3,
                               ),
                               const Text(
-                                "5. Once you have selected an answer, proceed to the next question. You cannot go back to previous questions.",
+                                "5. Once you have selected an answer, proceed to the next question. You can go back to previous questions.",
                                 style: TextStyle(
                                     fontSize: 15, fontWeight: FontWeight.w500),
                               ),

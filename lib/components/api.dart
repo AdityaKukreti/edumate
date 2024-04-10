@@ -11,10 +11,10 @@ class YoutubeAPI {
     return fdata;
   }
 
-  Future<String> getNotes(String videoId) async {
+  Future<String> getNotes(String videoId, String difficulty) async {
     final response = await dio.post(
         "https://youtube-data-api-c562.onrender.com/notes",
-        data: {'videoId': videoId});
+        data: {'videoId': videoId, 'difficulty': difficulty});
     if (response.data['status'] == 'false') {
       return 'no notes';
     }
@@ -33,6 +33,25 @@ class YoutubeAPI {
         "https://youtube-data-api-c562.onrender.com/generateQuiz",
         data: {'videoId': videoId});
     return response.data;
+  }
+
+  Future<Map<dynamic, dynamic>> uploadImageToServer(
+      String filePath, String text, String ocrResponse) async {
+    String ocrUrl = 'https://youtube-data-api-c562.onrender.com/ocr';
+    String chatUrl = 'https://youtube-data-api-c562.onrender.com/chat';
+
+    if (filePath != "") {
+      FormData formData = FormData.fromMap({
+        'file': await MultipartFile.fromFile(filePath, filename: 'image.jpg'),
+      });
+
+      var response = await Dio().post(ocrUrl, data: formData);
+      ocrResponse = response.data;
+    }
+    var response =
+        await Dio().post(chatUrl, data: {'ocr': ocrResponse, 'text': text});
+    print(response.data);
+    return {"text": response.data['text'], "ocrResponse": ocrResponse};
   }
 }
 

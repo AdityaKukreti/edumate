@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
+
 import '../../../components/api.dart';
 import '../../../components/videoDetails.dart';
 
@@ -20,8 +21,9 @@ class _NotesContainerState extends State<NotesContainer> {
   List<Widget> notes = [];
   List<pw.Widget> pdfNotes = [];
   bool noteStatus = false;
-  bool notesGenerated = true;
+  bool notesGenerated = false;
   bool buttonPressed = false;
+  String? difficulty;
 
   @override
   Widget build(BuildContext context) {
@@ -37,167 +39,258 @@ class _NotesContainerState extends State<NotesContainer> {
               minWidth: 200,
               height: 40,
               onPressed: () async {
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return const Dialog(
-                        child: SizedBox(
-                          height: 160,
-                          width: 300,
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "Your notes are being generated",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 17),
-                                ),
-                                SizedBox(
-                                  height: 25,
-                                ),
-                                CircularProgressIndicator(),
-                              ],
+                // Prompt the user to choose a difficulty level
+                difficulty = await showDialog<String>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    String? selectedDifficulty;
+                    return AlertDialog(
+                      backgroundColor: Colors.grey.shade100,
+                      title: const Text('Choose Difficulty Level'),
+
+                      // actions: <Widget>[
+                      //   TextButton(
+                      //     onPressed: () => Navigator.pop(context, 'Easy'),
+                      //     child: const Text('Easy'),
+                      //   ),
+                      //   TextButton(
+                      //     onPressed: () => Navigator.pop(context, 'Medium'),
+                      //     child: const Text('Medium'),
+                      //   ),
+                      //   TextButton(
+                      //     onPressed: () => Navigator.pop(context, 'Hard'),
+                      //     child: const Text('Hard'),
+                      //   ),
+                      // ],
+                      content: Container(
+                        height: 200,
+                        child: Column(
+                          children: [
+                            Spacer(),
+                            MaterialButton(
+                              minWidth: 200,
+                              onPressed: () {
+                                Navigator.pop(context, "brief");
+                              },
+                              child: Text(
+                                "Brief",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              color: Colors.black,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              elevation: 0,
+                            ),
+                            MaterialButton(
+                              minWidth: 200,
+                              onPressed: () {
+                                Navigator.pop(context, "descriptive");
+                              },
+                              child: Text(
+                                "Descriptive",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              color: Colors.black,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              elevation: 0,
+                            ),
+                            MaterialButton(
+                              minWidth: 200,
+                              onPressed: () {
+                                Navigator.pop(context, "detialed");
+                              },
+                              child: Text(
+                                "Detailed",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              color: Colors.black,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              elevation: 0,
+                            ),
+                            Spacer(
+                              flex: 2,
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+
+                if (difficulty != null) {
+                  // Show the "Your notes are being generated" dialog
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return const Dialog(
+                          child: SizedBox(
+                            height: 160,
+                            width: 300,
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Your notes are being generated",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 17),
+                                  ),
+                                  SizedBox(
+                                    height: 25,
+                                  ),
+                                  CircularProgressIndicator(),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      );
+                        );
+                      });
+
+                  CollectionReference notesDB =
+                      FirebaseFirestore.instance.collection('notes');
+                  TextEditingController controller = TextEditingController();
+
+                  controller.text =
+                      await YoutubeAPI().getNotes(widget.videoId, difficulty!);
+                  notes = [];
+
+                  if (controller.text != 'no notes') {
+                    notesDB.add({
+                      'uid': FirebaseAuth.instance.currentUser?.uid,
+                      'notes': controller.text,
+                      'videoTitle': details.videoTitle,
+                      'videoChannel': details.channelName,
+                      'timeStamp': Timestamp.now(),
+                      'thumbnail': details.channelThumbnail,
+                      'videoThumbnail': details.videoThumbnail,
+                      'videoId': details.videoId
                     });
 
-                CollectionReference notesDB =
-                    FirebaseFirestore.instance.collection('notes');
-                TextEditingController controller = TextEditingController();
-
-                controller.text = await YoutubeAPI().getNotes(widget.videoId);
-                notes = [];
-
-                if (controller.text != 'no notes') {
-                  notesDB.add({
-                    'uid': FirebaseAuth.instance.currentUser?.uid,
-                    'notes': controller.text,
-                    'videoTitle': details.videoTitle,
-                    'videoChannel': details.channelName,
-                    'timeStamp': Timestamp.now(),
-                    'thumbnail': details.channelThumbnail,
-                    'videoThumbnail': details.videoThumbnail,
-                    'videoId': details.videoId
-                  });
-                  pdfNotes.add(pw.Align(
-                      alignment: pw.Alignment.centerLeft,
-                      child: pw.Text(details.videoTitle,
-                          style: pw.TextStyle(
-                              fontSize: 16, fontWeight: pw.FontWeight.bold))));
-
-                  pdfNotes.add(pw.Align(
-                      alignment: pw.Alignment.centerLeft,
-                      child: pw.Text('by ' + details.channelName,
-                          style: pw.TextStyle(
-                              fontSize: 15, fontWeight: pw.FontWeight.bold))));
-
-                  pdfNotes.add(pw.Align(
-                      alignment: pw.Alignment.centerLeft,
-                      child: pw.Row(children: [
-                        pw.Text("link: "),
-                        pw.UrlLink(
-                            child: pw.Text(
-                                "www.youtube.com/watch?v=" + details.videoId,
-                                style: pw.TextStyle(color: PdfColors.blue)),
-                            destination:
-                                "www.youtube.com/watch?v=" + details.videoId)
-                      ])));
-                  pdfNotes.add(pw.Divider(thickness: 1.0));
-
-                  List<String> splitData = controller.text.split('\n');
-                  for (int i = 0; i < splitData.length; i++) {
-                    String data = splitData[i];
-                    if (data == '') {
-                      notes.add(const Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(""),
-                      ));
-                      pdfNotes.add(pw.Align(
+                    pdfNotes.add(pw.Align(
                         alignment: pw.Alignment.centerLeft,
-                        child: pw.Text("\n"),
-                      ));
-                    } else {
-                      if (data.contains('<h>')) {
-                        data = data.replaceAll('<h>', '');
-                        data = data.replaceAll('</h>', '');
-                        notes.add(Align(
+                        child: pw.Text(details.videoTitle,
+                            style: pw.TextStyle(
+                                fontSize: 16,
+                                fontWeight: pw.FontWeight.bold))));
+
+                    pdfNotes.add(pw.Align(
+                        alignment: pw.Alignment.centerLeft,
+                        child: pw.Text('by ' + details.channelName,
+                            style: pw.TextStyle(
+                                fontSize: 15,
+                                fontWeight: pw.FontWeight.bold))));
+
+                    pdfNotes.add(pw.Align(
+                        alignment: pw.Alignment.centerLeft,
+                        child: pw.Row(children: [
+                          pw.Text("link: "),
+                          pw.UrlLink(
+                              child: pw.Text(
+                                  "www.youtube.com/watch?v=" + details.videoId,
+                                  style: pw.TextStyle(color: PdfColors.blue)),
+                              destination:
+                                  "www.youtube.com/watch?v=" + details.videoId)
+                        ])));
+                    pdfNotes.add(pw.Divider(thickness: 1.0));
+
+                    List<String> splitData = controller.text.split('\n');
+                    for (int i = 0; i < splitData.length; i++) {
+                      String data = splitData[i];
+                      if (data == '') {
+                        notes.add(const Align(
                           alignment: Alignment.centerLeft,
-                          child: Text(
-                            data,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.w800, fontSize: 16),
-                          ),
+                          child: Text(""),
                         ));
                         pdfNotes.add(pw.Align(
                           alignment: pw.Alignment.centerLeft,
-                          child: pw.Text(
-                            data,
-                            style: pw.TextStyle(
-                                fontSize: 16, fontWeight: pw.FontWeight.bold),
-                          ),
-                        ));
-                      } else if (data.contains('<s>')) {
-                        data = data.replaceAll('<s>', '');
-                        data = data.replaceAll('</s>', '');
-                        notes.add(Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            data,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.w600, fontSize: 14),
-                          ),
-                        ));
-                        pdfNotes.add(pw.Align(
-                          alignment: pw.Alignment.centerLeft,
-                          child: pw.Text(
-                            data,
-                            style: pw.TextStyle(
-                                fontSize: 14, fontWeight: pw.FontWeight.bold),
-                          ),
+                          child: pw.Text("\n"),
                         ));
                       } else {
-                        notes.add(Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            data,
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                        ));
-                        pdfNotes.add(pw.Align(
-                          alignment: pw.Alignment.centerLeft,
-                          child: pw.Text(
-                            data,
-                            style: const pw.TextStyle(fontSize: 14),
-                          ),
-                        ));
+                        if (data.contains('<h>')) {
+                          data = data.replaceAll('<h>', '');
+                          data = data.replaceAll('</h>', '');
+                          notes.add(Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              data,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w800, fontSize: 16),
+                            ),
+                          ));
+                          pdfNotes.add(pw.Align(
+                            alignment: pw.Alignment.centerLeft,
+                            child: pw.Text(
+                              data,
+                              style: pw.TextStyle(
+                                  fontSize: 16, fontWeight: pw.FontWeight.bold),
+                            ),
+                          ));
+                        } else if (data.contains('<s>')) {
+                          data = data.replaceAll('<s>', '');
+                          data = data.replaceAll('</s>', '');
+                          notes.add(Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              data,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w600, fontSize: 14),
+                            ),
+                          ));
+                          pdfNotes.add(pw.Align(
+                            alignment: pw.Alignment.centerLeft,
+                            child: pw.Text(
+                              data,
+                              style: pw.TextStyle(
+                                  fontSize: 14, fontWeight: pw.FontWeight.bold),
+                            ),
+                          ));
+                        } else {
+                          notes.add(Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              data,
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                          ));
+                          pdfNotes.add(pw.Align(
+                            alignment: pw.Alignment.centerLeft,
+                            child: pw.Text(
+                              data,
+                              style: const pw.TextStyle(fontSize: 14),
+                            ),
+                          ));
+                        }
                       }
                     }
+                    pdfNotes.add(pw.SizedBox(height: 50));
+                    pdfNotes.add(pw.Align(
+                        alignment: pw.Alignment.bottomRight,
+                        child: pw.Text('These notes are generated with Edumate',
+                            style: pw.TextStyle(
+                                fontSize: 12,
+                                fontWeight: pw.FontWeight.bold))));
+                    notesGenerated = true;
+                  } else {
+                    notes.add(const Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Text(
+                        "Notes couldn't be generated for this video.",
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w500),
+                      ),
+                    ));
+                    notesGenerated = false;
                   }
-                  pdfNotes.add(pw.SizedBox(height: 50));
-                  pdfNotes.add(pw.Align(
-                      alignment: pw.Alignment.bottomRight,
-                      child: pw.Text('These notes are generated with Edumate',
-                          style: pw.TextStyle(
-                              fontSize: 12, fontWeight: pw.FontWeight.bold))));
-                  notesGenerated = true;
-                } else {
-                  notes.add(const Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Text(
-                      "Notes couldn't be generated for this video.",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                    ),
-                  ));
-                  notesGenerated = false;
+                  noteStatus = true;
+                  setState(() {});
+                  Navigator.pop(context);
                 }
-                noteStatus = true;
-                setState(() {});
-                Navigator.pop(context);
               },
               child: const Text("Get AI-generated notes"),
             ),
